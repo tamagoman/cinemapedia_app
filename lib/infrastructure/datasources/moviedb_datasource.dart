@@ -11,14 +11,14 @@ class MoviedbDatasource extends MoviesDatasource{
   final dio = Dio(BaseOptions(
     baseUrl: 'https://api.themoviedb.org/3',
     queryParameters: {
-      //'api_key': Environment.theMovieDbKey,
+      'api_key': Environment.theMovieDbKey,
       'language': 'es-MX'
     },
-    headers: {
-      'Authorization': 'Bearer ${Environment.theMovieDbKey}', // Set the Bearer token here
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
+    // headers: {
+    //   'Authorization': 'Bearer ${Environment.theMovieDbKey}', // Set the Bearer token here
+    //   'Accept': 'application/json',
+    //   'Content-Type': 'application/json',
+    // },
   ));
 
   @override
