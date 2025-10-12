@@ -1,8 +1,10 @@
 
 
-import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:cinemapedia/presentation/providers/providers.dart';
+import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -35,7 +37,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
     final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
 
-    if( nowPlayingMovies.length == 0 ) {
+    if( nowPlayingMovies.isEmpty ) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator()
@@ -44,16 +46,25 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     };
 
     return Scaffold(
-      body: ListView.builder(
-        itemCount: nowPlayingMovies.length,
-        itemBuilder: (context, index) {
-          final movie = nowPlayingMovies[index];
-      
-          return ListTile(
-            title: Text( movie.title ),
-          );
-        },
-      ),
+      body: Column(
+        children: [
+          CustomAppbar(),
+
+          MoviesSlideshow(movies: nowPlayingMovies)
+          // Expanded(
+          //   child: ListView.builder(
+          //     itemCount: nowPlayingMovies.length,
+          //     itemBuilder: (context, index) {
+          //       final movie = nowPlayingMovies[index];
+            
+          //       return ListTile(
+          //         title: Text( movie.title ),
+          //       );
+          //     },
+          //   ),
+          // ),
+        ]
+      )
     );
   }
 }
