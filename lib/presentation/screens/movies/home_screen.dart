@@ -35,29 +35,61 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    //final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
+    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
 
     return Scaffold(
-      body: Column(
-        children: [
-          CustomAppbar(),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar( 
+            floating: true,
+            flexibleSpace: const FlexibleSpaceBar(
+              titlePadding: EdgeInsets.symmetric( horizontal: 0 ),
+              title: CustomAppbar()
+            ),
+            toolbarHeight: 70,
+          ),
 
-          MoviesSlideshow(movies: slideShowMovies)
-          // Expanded(
-          //   child: ListView.builder(
-          //     itemCount: nowPlayingMovies.length,
-          //     itemBuilder: (context, index) {
-          //       final movie = nowPlayingMovies[index];
-            
-          //       return ListTile(
-          //         title: Text( movie.title ),
-          //       );
-          //     },
-          //   ),
-          // ),
-        ]
-      )
+          SliverList(delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return Column(
+                children: [              
+                  MoviesSlideshow(movies: slideShowMovies),
+              
+                  MovieHorizontalListview(
+                    movies: nowPlayingMovies,
+                    title: 'En cines',
+                    subTitle: 'Lunes 20/oct',
+                    loadNextPage: (){ 
+                      ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                    },
+                  ),
+              
+                  MovieHorizontalListview(
+                    movies: nowPlayingMovies,
+                    title: 'Proximamente',
+                    subTitle: 'Diciembre',
+                    loadNextPage: (){ 
+                      ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                    },
+                  ),
+              
+                  MovieHorizontalListview(
+                    movies: nowPlayingMovies,
+                    title: 'Continuar viendo',
+                    subTitle: 'Listado',
+                    loadNextPage: (){ 
+                      ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                    },
+                  ),
+                ]
+              );
+            },
+            childCount: 1
+          ))
+        ],
+      ),
+      bottomNavigationBar: CustomBottomNavigation(),
     );
   }
 }
