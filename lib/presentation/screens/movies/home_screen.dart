@@ -31,12 +31,18 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     super.initState();
 
     ref.read( nowPlayingMoviesProvider.notifier ).loadNextPage();
+    ref.read( popularMoviesProvider.notifier ).loadNextPage();
+    ref.read( topRatedMoviesProvider.notifier ).loadNextPage();
+    ref.read( upcomingMoviesProvider.notifier ).loadNextPage();
   }
 
   @override
   Widget build(BuildContext context) {
-    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
+    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
+    final popularMovies = ref.watch( popularMoviesProvider );
+    final topRatedMovies = ref.watch( topRatedMoviesProvider );
+    final upcomingMovies = ref.watch( upcomingMoviesProvider );
 
     return Scaffold(
       body: CustomScrollView(
@@ -66,20 +72,29 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                   ),
               
                   MovieHorizontalListview(
-                    movies: nowPlayingMovies,
-                    title: 'Proximamente',
-                    subTitle: 'Diciembre',
+                    movies: popularMovies,
+                    title: 'Populares',
+                    //subTitle: '',
                     loadNextPage: (){ 
-                      ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                      ref.read(popularMoviesProvider.notifier).loadNextPage();
                     },
                   ),
               
                   MovieHorizontalListview(
-                    movies: nowPlayingMovies,
-                    title: 'Continuar viendo',
-                    subTitle: 'Listado',
+                    movies: topRatedMovies,
+                    title: 'Mejores calificadas',
+                    //subTitle: '',
                     loadNextPage: (){ 
-                      ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                      ref.read(topRatedMoviesProvider.notifier).loadNextPage();
+                    },
+                  ),
+
+                  MovieHorizontalListview(
+                    movies: upcomingMovies,
+                    title: 'Próximos estrenos', //upcoming & top rated
+                    //subTitle: '',
+                    loadNextPage: (){ 
+                      ref.read(upcomingMoviesProvider.notifier).loadNextPage();
                     },
                   ),
                 ]
