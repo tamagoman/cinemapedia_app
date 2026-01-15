@@ -41,13 +41,95 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
         physics: const ClampingScrollPhysics(),
         slivers: [
           _CustomSliverAppBar(movie: movie),
+          SliverList(delegate: SliverChildBuilderDelegate(
+              (context, index) => _MovieDetails(movie: movie),
+              childCount: 1
+            )
+          )
         ]
       )
     );
   }  
 }
 
+class _MovieDetails extends StatelessWidget {
+  final Movie movie;
 
+  const _MovieDetails({required this.movie});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textStyles = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  movie.posterPath,
+                  width: size.width * 0.3,
+                ),
+              ),
+
+              const SizedBox(width: 10,),
+
+              SizedBox(
+                width: (size.width - 40) * 0.7 - 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text( 
+                      movie.title,
+                      style: textStyles.titleLarge,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                    Text( 
+                      movie.overview,
+                      style: textStyles.bodyMedium,
+                      maxLines: 6,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+
+        //Movie Genres
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Wrap(
+            spacing: 10,
+            children: [
+              ...movie.genreIds.map((genreId) => Chip(
+                  label: Text( 
+                    genreId.toString(),
+                    style: textStyles.bodyMedium?.copyWith( color: Colors.white ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)
+                  ),
+                  backgroundColor: Colors.indigo,
+                )
+              )
+            ],
+          ),
+        ),
+        // TODO : Show actors, ListView       
+        const SizedBox(height: 100),
+      ],
+    );
+  }
+}
 
 class _CustomSliverAppBar extends StatelessWidget {
     final Movie movie;
