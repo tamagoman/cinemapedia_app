@@ -8,6 +8,15 @@ final movieInfoProvider = StateNotifierProvider<MovieMapNotifier, Map<String, Mo
   return MovieMapNotifier( getMovie: movieRepository.getMovieById );
 });
 
+
+/*
+Will return something like this:
+{
+  'movieId1': Movie(),
+  'movieId2': Movie(),
+}
+*/
+
 typedef GetMovieCallback = Future<Movie>Function(String id);
 
 class MovieMapNotifier extends StateNotifier<Map<String, Movie>> {

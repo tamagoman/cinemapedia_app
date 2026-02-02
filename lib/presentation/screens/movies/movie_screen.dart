@@ -1,4 +1,5 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/presentation/providers/actors/actors_by_movie_provider.dart';
 import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
     super.initState();
 
     ref.read(movieInfoProvider.notifier).loadMovie( widget.movieId );
+    ref.read(actorsByMovieProvider.notifier).loadActorsByMovie( widget.movieId );
   }
 
   @override
@@ -124,12 +126,89 @@ class _MovieDetails extends StatelessWidget {
             ],
           ),
         ),
-        // TODO : Show actors, ListView       
-        const SizedBox(height: 100),
+     
+        _ActorsByMovie(movieId:  movie.id.toString()),
+
+        const SizedBox(height: 50),
       ],
     );
   }
 }
+
+class _ActorsByMovie extends ConsumerWidget {
+  final String movieId;
+  const _ActorsByMovie({required this.movieId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final actorsByMovie = ref.watch( actorsByMovieProvider );
+
+    if( actorsByMovie[movieId.toString()] == null ) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircularProgressIndicator( strokeWidth: 2,),
+        ),
+      );
+    }
+
+    if( actorsByMovie[movieId.toString()] != null ) {
+      final actors = actorsByMovie[movieId.toString()]!;
+
+      return SizedBox(
+        height: 300,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: actors.length,
+          itemBuilder: (context, index) {
+            final actor = actors[index];
+            return Container(
+              width: 135,
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      actor.profilePath,
+                      width: 135,
+                      height: 180,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 5,),
+                  Text(
+                    actor.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    actor.character??'',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle( 
+                      fontSize: 10,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    return Container();
+    
+  }
+}
+
 
 class _CustomSliverAppBar extends StatelessWidget {
     final Movie movie;
@@ -147,16 +226,16 @@ class _CustomSliverAppBar extends StatelessWidget {
         foregroundColor: Colors.white,
         flexibleSpace: FlexibleSpaceBar(
           titlePadding: const EdgeInsets.symmetric( horizontal: 10, vertical: 5),
-          title: Text( 
-            movie.title,
-            style: const TextStyle( 
-              fontSize: 20,
-              color: Colors.white
-              // overflow: TextOverflow.ellipsis
-            ),
-            textAlign: TextAlign.start,
+          // title: Text( 
+          //   movie.title,
+          //   style: const TextStyle( 
+          //     fontSize: 20,
+          //     color: Colors.white
+          //     // overflow: TextOverflow.ellipsis
+          //   ),
+          //   textAlign: TextAlign.start,
             
-          ),
+          // ),
           background: Stack(
             children: [
               SizedBox.expand(
